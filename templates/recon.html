@@ -1,0 +1,52 @@
+{% extends "template.html" %} {% block body %}
+
+<h2>Recon Page</h2>
+<p>This is the recon page!</p>
+
+<br>
+<h3>Subdomains : {{subDomain}}</h3>
+<input type="hidden" id="domain" name="domain" value={{subDomain}}>
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.0.4/socket.io.js" integrity="sha512-aMGMvNYu8Ue4G+fHa359jcPb1u+ytAF+P2SCb+PxrjCdO3n3ZTxJ30zuH39rimUggmTwmh2u7wvQsDTHESnmfQ==" crossorigin="anonymous"></script> -->
+<script type="text/javascript" charset="utf-8">
+  // $(document).ready(function() {
+  //     var socket = io();
+  //     var domain = document.getElementById("domain").value;
+  //     socket.on('connect', function() {
+  //       socket.emit('my_event', {data: domain});   
+  //     });
+  //     socket.on('my_response', function(msg) {
+  //               $('#logSubdomains').append('<br>' + $('<div/>').text('Subdomain :' + msg.name + ', ip : ' + msg.ip + ', port : '+msg.port + ', service : '+ msg.service).html());
+  //     });
+  // });
+  this.websocket = new WebSocket("ws://127.0.0.1:3456/socket");
+
+this.websocket.onmessage = function (event) {
+    console.log(JSON.parse(event.data));
+    object = JSON.parse(event.data);
+    const node = document.createElement("div");
+    node.innerHTML+='Subdomain :' + object.name + ', ip : ' + object.ip + ', port : '+object.port + ', service : '+ object.service;
+    var logSubdomain = document.getElementById("logSubdomains");
+    logSubdomain.appendChild(node);
+  };
+
+  this.websocket.onopen = function (event) {
+    console.log(event);
+    console.log("Successfully connected to the echo websocket server...");
+  };
+</script>
+<div id="logSubdomains"></div>
+<!-- <ul class="subdomains">
+    {% for subdomain in subdomains %}
+    <li> <h2> {{ subdomain.name }} : {{ subdomain.ip }} </h2> 
+    <ul>
+      {% for x in subdomain.port %}
+      <li> port : {{ x.name }} service : {{x.service}}</li>
+    {% endfor %}
+    </ul>
+    </li>
+      {% endfor %}
+  </ul>
+<br> -->
+
+{% endblock %}
